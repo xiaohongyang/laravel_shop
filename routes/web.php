@@ -93,9 +93,10 @@ Route::get('passwordToken', function (\Illuminate\Http\Request $request) {
 	]);
 	if ($validator->fails()) {
 		$result['message'] = $validator->messages()->getMessageBag();
-	} else {
-		$user = \App\Models\Admin::where('email', $request->get('email'))->first();
-		// echo $user->email;exit;
+	} else if(Auth::attempt(['email' => $email, 'password' => $password])){
+
+		$user = \App\Models\UserModel::where('email', $request->get('email'))
+            ->first();
 
 		if (is_null($user)) {
 			$result['data'] = '';
