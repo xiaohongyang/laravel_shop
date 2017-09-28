@@ -196,91 +196,13 @@ Route::get('getToken', function (\Illuminate\Http\Request $request) {
 #endregion
 
 Route::get('/', 'IndexController@index');
-Route::post('/', 'IndexController@index');
-Route::get('index', 'IndexController@index');
-#region UserCenter
 
-Route::get('/home', 'UserCenter\UserCenterController@index')->name('home')->middleware(['auth']);
-
-#endregion
 
 Route::get('md5', function (\Illuminate\Http\Request $request) {
-
 	return md5($request->get('key'));
 });
 
-#region 前端文章展示
-Route::get('search', 'ArticleController@search');
-Route::get('articles', 'ArticleController@index');
-Route::get('article/{id}', 'ArticleController@item');
 
-Route::get('list/{type_id}', 'ArticleController@list')->name('article_list');
-Route::get('detail/{id}', 'ArticleController@detail')->name('article_detail');
-#endregion
-
-#region 文章管理
-
-Route::group(['middleware' => 'auth'], function () {
-	Route::get('/user/article/list', 'UserCenter\ArticleController@list2')->name('user-article-list');
-	Route::get('/user/article/create', 'UserCenter\ArticleController@create')->name('user-article-create');
-	Route::get('/user/article/create2', 'UserCenter\ArticleController@create2')->name('user-article-create');
-	Route::post('/user/article/create', 'UserCenter\ArticleController@create')->name('user-article-create');
-	Route::get('/user/article/edit', 'UserCenter\ArticleController@edit')->name('user-article-edit');
-	Route::get('/user/article/del', 'UserCenter\ArticleController@del')->name('user-article-del');
-	Route::get('/user/article/discuss/list', 'UserCenter\ArticleController@discussList')->name('user-article-discuss-list');
-});
-
-Route::get('uploadimage', 'IndexController@uploadimage');
-Route::post('douploadimage', 'IndexController@douploadimage')->name('douploadimage');
-#endregion
-
-/*Route::get('/test', function(){
-$type = new \App\Models\ArticleTypeModel();
-$type->create("linux");
-return 'test';
-});*/
-
-Route::get('/create', function (\Illuminate\Http\Request $request) {
-
-	$article = new \App\Models\ArticleModel();
-
-	$typeName = $request->get('type_name');
-	$typeItem = \App\Models\ArticleTypeModel::where(['name' => $typeName])->first();
-	if (is_null($typeItem)) {
-		$typeItem = new \App\Models\ArticleTypeModel();
-		$typeItem->create($typeName);
-	}
-
-	$request->merge(['type_id' => $typeItem->id]);
-
-	$result = $article->create($request);
-	var_dump($result);
-	print_r($request);
-});
-
-Route::post('/create', function (\Illuminate\Http\Request $request) {
-
-	$article = new \App\Models\ArticleModel();
-
-	if ($request->has('title')) {
-//        $request->merge(['title' => strip_tags($request->get('title'))]);
-		$request->merge(['title' => trim(strip_tags($request->get('title')))]);
-	}
-
-	$typeName = $request->get('type_name');
-
-	$typeItem = \App\Models\ArticleTypeModel::where(['name' => $typeName])->first();
-	if (is_null($typeItem)) {
-		$typeItem = new \App\Models\ArticleTypeModel();
-		$typeItem->create($typeName);
-	}
-	$request->merge(['type_id' => $typeItem->id]);
-
-	$result = $article->create($request);
-	var_dump($result);exit;
-
-	var_dump($result);
-});
 
 Route::get('queue_test', function (\Illuminate\Http\Request $request) {
 
@@ -317,6 +239,5 @@ Route::group([], function () {
 	Route::get('/admin/guestbook/index', 'Admin\GuestbookController@index')->name('admin.guestbook.index');
 	//留言
 	Route::get('/admin/survey/index', 'Admin\SurveyController@index')->name('admin.survey.index');
-
 });
 #region
